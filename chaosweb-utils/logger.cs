@@ -4,6 +4,9 @@ using System.Diagnostics;
 
 namespace chaosweb.utils
 {
+	/// <summary>
+	/// Logging class that allows you to build a logger
+	/// </summary>
 	public class logger
 	{
 		public static string logDirectory;
@@ -12,19 +15,19 @@ namespace chaosweb.utils
 
 		StreamWriter writer;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="chaosweb.utils.logger"/> class.  Defaults to logging to Console.
+		/// </summary>
 		public logger()
 		{
-			logDirectory = Directory.GetCurrentDirectory ();
-			logFile = logDirectory + "\\" + Process.GetCurrentProcess().ProcessName + ".txt";
-
-			if (!System.IO.Directory.Exists(logDirectory))
-				System.IO.Directory.CreateDirectory(logDirectory);
-
-			writer = File.AppendText(logFile);
-
-			WriteEntry("LogFile Opened");
+			console = true;
+			WriteEntry ("Console Log Opened");
 		}
-			
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="chaosweb.utils.logger"/> class.
+		/// </summary>
+		/// <param name="filename">Filename to log to, if set to "console" it logs to default Console</param>
 		public logger(string filename)
 		{
 			logFile = filename;
@@ -45,6 +48,11 @@ namespace chaosweb.utils
 
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="chaosweb.utils.logger"/> class.
+		/// </summary>
+		/// <param name="filename">Filename to log to</param>
+		/// <param name="console">If set to <c>true</c> logs to Console as well.</param>
 		public logger(string filename, Boolean console)
 		{
 			logDirectory = Directory.GetCurrentDirectory ();
@@ -59,6 +67,10 @@ namespace chaosweb.utils
 			WriteEntry("LogFile Opened");
 		}
 
+		/// <summary>
+		/// Writes the log entry.
+		/// </summary>
+		/// <param name="message">Message to log (use string.Format() to include params).</param>
 		public void WriteEntry(string message)
 		{
 			String CompleteLog = string.Format("[{0} {1}] {2}: {3}", DateTime.Now.ToLongDateString (), DateTime.Now.ToLongTimeString (), Process.GetCurrentProcess().ProcessName, message);
