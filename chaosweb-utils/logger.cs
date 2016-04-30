@@ -8,6 +8,7 @@ namespace chaosweb.utils
 	{
 		public static string logDirectory;
 		public static string logFile;
+		private Boolean console = false;
 
 		StreamWriter writer;
 
@@ -23,24 +24,32 @@ namespace chaosweb.utils
 
 			WriteEntry("LogFile Opened");
 		}
-
+			
 		public logger(string filename)
+		{
+			logFile = filename;
+
+			if (logFile == "console") {
+				console = true;
+				WriteEntry ("Console Log Opened");
+			} else {
+
+				if (!System.IO.Directory.Exists (Path.GetDirectoryName (logFile))) {
+					System.IO.Directory.CreateDirectory (Path.GetDirectoryName (logFile).ToString());
+				}
+
+				writer = File.AppendText (logFile);
+
+				WriteEntry ("LogFile Opened");
+			}
+
+		}
+
+		public logger(string filename, Boolean console)
 		{
 			logDirectory = Directory.GetCurrentDirectory ();
 			logFile = filename;
-
-			if (!System.IO.Directory.Exists(logDirectory))
-				System.IO.Directory.CreateDirectory(logDirectory);
-
-			writer = File.AppendText(logFile);
-
-			WriteEntry("LogFile Opened");	
-		}
-
-		public logger (string dir, string filename)
-		{
-			logDirectory = dir;
-			logFile = filename;
+			console = this.console;
 
 			if (!System.IO.Directory.Exists(logDirectory))
 				System.IO.Directory.CreateDirectory(logDirectory);
@@ -52,8 +61,16 @@ namespace chaosweb.utils
 
 		public void WriteEntry(string message)
 		{
-			writer.WriteLine("[{0} {1}] {2}", DateTime.Now.ToLongDateString(), DateTime.Now.ToLongTimeString(), message);
-			writer.Flush();
+			String CompleteLog = string.Format("[{0} {1}] {2}: {3}", DateTime.Now.ToLongDateString (), DateTime.Now.ToLongTimeString (), Process.GetCurrentProcess().ProcessName, message);
+
+			if (String.IsNullOrEmpty(logFile)) {
+				writer.WriteLine (CompleteLog);
+				writer.Flush ();
+			}
+
+			if (console) {
+				Console.WriteLine (CompleteLog);
+			}
 		}
 
 	}
