@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace chaosweb.utils
 {
@@ -71,9 +72,14 @@ namespace chaosweb.utils
 		/// Writes the log entry.
 		/// </summary>
 		/// <param name="message">Message to log (use string.Format() to include params).</param>
-		public void WriteEntry(string message)
+		public void WriteEntry(string message, [CallerFilePath] string callerSourceFile = null, [CallerMemberName] string callerMember = null, [CallerLineNumber] int callerLineNumber = 0)
 		{
-			String CompleteLog = string.Format("[{0} {1}] {2}: {3}", DateTime.Now.ToLongDateString (), DateTime.Now.ToLongTimeString (), Process.GetCurrentProcess().ProcessName, message);
+			DateTime datetime = DateTime.Now;
+			string timestamp = datetime.ToString ("MMM dd yyyy hh:mm:ss");
+			callerSourceFile = Path.GetFileName (callerSourceFile);
+			string source = callerMember + "(" + callerSourceFile + ";" + callerLineNumber + ")";
+
+			String CompleteLog = string.Format("[{0}] {1}: {2}", timestamp, source, message);
 
 			if (String.IsNullOrEmpty(logFile)) {
 				writer.WriteLine (CompleteLog);
